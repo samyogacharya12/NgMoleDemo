@@ -5,19 +5,41 @@
   <title>NGL Viewer Local Example</title>
   <script src="js/ngl.js"></script>
   <style>
-    html, body { margin: 0; padding: 0; height: 100%; }
-    #viewport { width: 100%; height: 100%; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    #controls {
+      padding: 10px;
+      background: #f8f8f8;
+      border-bottom: 1px solid #ccc;
+    }
+    #viewport {
+      flex: 1;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
 
+<!-- Upload/Convert Button Section -->
+<div id="controls">
+  <form action="generate_pdb.php" method="post">
+    <button type="submit">Generate PDB from circDNA.xyz</button>
+  </form>
+</div>
+
+<!-- NGL Viewer Container -->
 <div id="viewport"></div>
 
 <script>
   const stage = new NGL.Stage("viewport");
 
   // Load local file from molecules folder
-  stage.loadFile("molecules/1crn.pdb", {
+  stage.loadFile("molecules/output.pdb", {
     defaultRepresentation: true
   });
 
@@ -27,4 +49,3 @@
 
 </body>
 </html>
-
