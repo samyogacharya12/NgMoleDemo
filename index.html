@@ -1,51 +1,42 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>NGL Viewer Local Example</title>
+  <meta charset="utf-8">
+  <title>NGL — DNA beads example</title>
   <script src="js/ngl.js"></script>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-    }
-    #controls {
-      padding: 10px;
-      background: #f8f8f8;
-      border-bottom: 1px solid #ccc;
-    }
-    #viewport {
-      flex: 1;
-      width: 100%;
-    }
+    body { background:#111; color:#ddd; font-family: Arial, sans-serif; }
+    #nglViewer { width:700px; height:500px; margin: 20px auto; border: 1px solid #444; }
+    #info { width:700px; margin: 6px auto; font-size:14px; text-align:center; }
+    button { margin:6px; padding:6px 10px; }
   </style>
 </head>
 <body>
 
-<!-- Upload/Convert Button Section -->
-<div id="controls">
-  <form action="generate_pdb.php" method="post">
-    <button type="submit">Generate PDB from circDNA.xyz</button>
-  </form>
-</div>
-
-<!-- NGL Viewer Container -->
-<div id="viewport"></div>
+<div id="nglViewer"></div>
 
 <script>
-  const stage = new NGL.Stage("viewport");
+  // ✅ Create stage object first
+  const stage = new NGL.Stage("nglViewer");
 
-  // Load local file from molecules folder
-  stage.loadFile("molecules/output.pdb", {
-    defaultRepresentation: true
-  });
+  // Load nucleic structure
+  stage.loadFile("molecules/output.mol2", { defaultRepresentation: false })
+    .then(function (comp) {
+      // DNA chain A
+      comp.addRepresentation("spacefill", { sele: "chain A or resname DA DC DG DT", color: "yellow", radiusScale: 1.0 });
 
-  // Optional: Resize with window
+      // RNA chain B
+      comp.addRepresentation("spacefill", { sele: "chain B or resname A U G C", color: "green", radiusScale: 1.0 });
+
+      // Bonds as sticks
+      comp.addRepresentation("stick", { sele: "chain A or chain B", radiusScale: 0.25, colorScheme: "element" });
+
+      comp.autoView();
+    })
+    .catch(e => console.error(e));
+
+  // ✅ Handle window resize
   window.addEventListener("resize", () => stage.handleResize(), false);
 </script>
-
 </body>
 </html>
