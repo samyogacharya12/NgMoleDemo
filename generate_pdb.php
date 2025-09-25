@@ -1,8 +1,8 @@
 <?php
 
 // Define file paths
-$xyzPath = __DIR__ . '/molecules/circDNA.xyz';
-$pdbPath = __DIR__ . '/molecules/output.pdb';
+$xyzPath = __DIR__ . '/molecules/eq.out.noH.xyz';
+$pdbPath = __DIR__ . '/molecules/eq.out.pdb';
 
 // Check if input file exists
 if (!file_exists($xyzPath)) {
