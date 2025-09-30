@@ -22,16 +22,20 @@
   // Load nucleic structure
   stage.loadFile("molecules/output.mol2", { defaultRepresentation: false })
     .then(function (comp) {
-      // DNA chain A
-      comp.addRepresentation("spacefill", { sele: "chain A or resname DA DC DG DT", color: "yellow", radiusScale: 1.0 });
+      // Make everything yellow (spacefill)
+      comp.addRepresentation("spacefill", { sele: "all", color: "yellow", radiusScale: 1.0 });
 
-      // RNA chain B
-      comp.addRepresentation("spacefill", { sele: "chain B or resname A U G C", color: "green", radiusScale: 1.0 });
+      // Bonds as sticks (element-colored, but you can also force yellow)
+      // comp.addRepresentation("stick", { sele: "all", radiusScale: 0.25, colorScheme: "element" });
+      comp.addRepresentation("ball+stick", { sele: "all", radiusScale: 0.25, colorScheme: "element" });
 
-      // Bonds as sticks
-      comp.addRepresentation("stick", { sele: "chain A or chain B", radiusScale: 0.25, colorScheme: "element" });
 
       comp.autoView();
+
+      // ✅ Enable smooth automatic rotation
+      stage.setSpin(true);
+        // [0,1,0] = rotate around Y axis
+      // 0.5 = speed (increase for faster spin)
     })
     .catch(e => console.error(e));
 
