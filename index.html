@@ -2,44 +2,93 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>NGL — DNA beads example</title>
+  <title>NGL — Custom Right Click Menu</title>
   <script src="js/ngl.js"></script>
   <style>
     body { background:#111; color:#ddd; font-family: Arial, sans-serif; }
-    #nglViewer { width:700px; height:500px; margin: 20px auto; border: 1px solid #444; }
-    #info { width:700px; margin: 6px auto; font-size:14px; text-align:center; }
-    button { margin:6px; padding:6px 10px; }
+    #nglViewer { 
+      width:700px; 
+      height:500px; 
+      margin: 20px auto; 
+      border: 1px solid #444; 
+      position: relative;
+    }
+    /* Custom context menu */
+    #contextMenu {
+      display: none;
+      position: absolute;
+      background: #222;
+      border: 1px solid #555;
+      border-radius: 6px;
+      z-index: 1000;
+      font-size: 14px;
+      min-width: 120px;
+    }
+    #contextMenu ul {
+      list-style: none;
+      margin: 0;
+      padding: 4px 0;
+    }
+    #contextMenu li {
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+    #contextMenu li:hover {
+      background: #444;
+    }
   </style>
 </head>
 <body>
 
 <div id="nglViewer"></div>
 
+<!-- Custom context menu -->
+<div id="contextMenu">
+  <ul>
+    <li id="toggleSpin">⏯ Pause/Play Rotation</li>
+    <li id="resetView">🔄 Reset View</li>
+  </ul>
+</div>
+
 <script>
-  // ✅ Create stage object first
   const stage = new NGL.Stage("nglViewer");
+  let spinning = true;
 
-  // Load nucleic structure
-  stage.loadFile("molecules/output.mol2", { defaultRepresentation: false })
+  stage.loadFile("molecules/outputv1.mol2", { defaultRepresentation: false })
     .then(function (comp) {
-      // Make everything yellow (spacefill)
       comp.addRepresentation("spacefill", { sele: "all", color: "yellow", radiusScale: 1.0 });
-
-      // Bonds as sticks (element-colored, but you can also force yellow)
-      // comp.addRepresentation("stick", { sele: "all", radiusScale: 0.25, colorScheme: "element" });
       comp.addRepresentation("ball+stick", { sele: "all", radiusScale: 0.25, colorScheme: "element" });
-
-
       comp.autoView();
+      stage.setSpin(true); // start spinning
+    });
 
-      // ✅ Enable smooth automatic rotation
-      stage.setSpin(true);
-        // [0,1,0] = rotate around Y axis
-      // 0.5 = speed (increase for faster spin)
-    })
-    .catch(e => console.error(e));
+  const viewer = document.getElementById("nglViewer");
+  const menu = document.getElementById("contextMenu");
 
-  // ✅ Handle window resize
+  // Show custom menu on right click
+  viewer.addEventListener("contextmenu", function(e) {
+    e.preventDefault();
+    menu.style.left = e.pageX + "px";
+    menu.style.top = e.pageY + "px";
+    menu.style.display = "block";
+  });
+
+  // Hide menu when clicking elsewhere
+  document.addEventListener("click", function() {
+    menu.style.display = "none";
+  });
+
+
+  document.getElementById("toggleSpin").addEventListener("click", function() {
+    spinning = !spinning;
+    stage.setSpin(spinning);
+  });
+
+  document.getElementById("resetView").addEventListener("click", function() {
+    stage.autoView();
+  });
+
+  // Handle window resize
   window.addEventListener("resize", () => stage.handleResize(), false);
 </script>
 </body>
