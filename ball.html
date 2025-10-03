@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>NGL Viewer — Auto Spin 1CRN</title>
+  <script src="https://unpkg.com/ngl@latest/dist/ngl.js"></script>
+  <style>
+    body { background:#111; color:#ddd; font-family: Arial, sans-serif; }
+    #nglViewer { width:800px; height:600px; margin: 20px auto; border: 1px solid #444; }
+  </style>
+</head>
+<body>
+
+<h2 style="text-align:center;">Auto-Rotating 1CRN (Crambin Protein)</h2>
+<div id="nglViewer"></div>
+
+<script>
+  // ✅ Create Stage
+  const stage = new NGL.Stage("nglViewer");
+
+  // ✅ Load 1CRN from RCSB
+  stage.loadFile("molecules/1crn.pdb", { defaultRepresentation: false })
+    .then(function (comp) {
+      // Add cartoon representation
+      comp.addRepresentation("cartoon", { color: "yellow" });
+
+      // Add sticks for bonds
+      comp.addRepresentation("ball+stick", { sele: "all", colorScheme: "element" });
+
+      // Fit to view
+      comp.autoView();
+
+      // ✅ Enable automatic spin
+      stage.setSpin([0, 1, 0], 0.5);  
+      // [0,1,0] = Y-axis spin, 0.5 = speed
+    })
+    .catch(e => console.error(e));
+
+  // ✅ Handle window resize
+  window.addEventListener("resize", () => stage.handleResize(), false);
+</script>
+
+</body>
+</html>

@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Chromatin MOL2 Visualization</title>
-  <!-- Load NGL.js (use local file or CDN) -->
-  <!-- If you have ngl.js locally in js/ngl.js use that, otherwise use CDN below -->
-  <script src="https://unpkg.com/ngl@latest/dist/ngl.js"></script>
+  <script src="js/ngl.js"></script>
   <style>
     body { margin: 0; background: #111; }
     #viewport { width: 100vw; height: 100vh; }
@@ -19,22 +17,25 @@
   const stage = new NGL.Stage("viewport", { backgroundColor: "black" });
 
   // Load your MOL2 file
-  // Make sure this file is in the same directory or adjust the path
   stage.loadFile("icm.output.mol2").then(function (component) {
-    // ----- Representation 1: “Spacefill” (bead-like spheres) -----
+    // Make everything yellow and bead-like
     component.addRepresentation("spacefill", {
-      color: "element", // color by atom type
-      scale: 0.5        // adjust bead size (try 0.3 – 1.0)
+      color: "yellow",  // set all atoms to yellow
+      scale: 0.5         // adjust bead size
     });
 
-    // ----- Optional Representation 2: Points (if you want a point cloud)
-    // component.addRepresentation("point", {
-    //   pointSize: 5,
-    //   color: "element"
-    // });
+    // Optional: add ball+stick bonds
+    component.addRepresentation("ball+stick", {
+      sele: "all",
+      colorScheme: "element",
+      radiusScale: 0.2
+    });
 
-    // Auto-fit view
+    // Auto-fit the view
     component.autoView();
+
+    // ✅ Enable automatic rotation
+    stage.setSpin([0, 1, 0], 0.5);  // Y-axis, speed 0.5
   });
 
   // Handle window resize
