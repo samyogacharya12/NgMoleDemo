@@ -1,7 +1,7 @@
 <?php
 // Input and output file paths
-$inputFile = "molecules/eq.out.noH.xyz";
-$outputFile = "molecules/outputv1.mol2";
+$inputFile = "molecules/icm.occ.noH.xyz";
+$outputFile = "molecules/icm.occ.noH.mol2";
 
 // Build obabel command
 $command = "obabel " . escapeshellarg($inputFile) . " -O " . escapeshellarg($outputFile);
