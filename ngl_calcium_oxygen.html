@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>NGL — force Ca yellow & O blue (defensive)</title>
+  <style>
+    html,body { height:100%; margin:0; background:#111; color:#eee; font-family: sans-serif; }
+    #viewport { width:100vw; height:90vh; }
+    #controls { padding:8px; }
+    button { margin-right:8px; padding:6px 10px; border-radius:6px; background:#333; color:#fff; border:0; cursor:pointer;}
+  </style>
+  <script src="https://unpkg.com/ngl@0.10.4/dist/ngl.js"></script>
+</head>
+<body>
+  <div id="controls">
+    <button id="center">Center / AutoView</button>
+    <span>Goal: <b style="color:#FFFF00">Ca → yellow</b>, <b style="color:#1E90FF">O → blue</b></span>
+  </div>
+  <div id="viewport"></div>
+
+  <script>
+    const stage = new NGL.Stage("viewport");
+    window.addEventListener("resize", () => stage.handleResize(), false);
+
+    // hex colors (explicit)
+    const CA_COLOR = "#FFFF00"; // bright yellow
+    const O_COLOR  = "#1E90FF"; // dodger-like blue
+
+    // load mol2 file
+    stage.loadFile("calcium_oxygen.mol2").then(component => {
+      component.removeAllRepresentations();
+
+      // Inspect structure: print unique element and atom names to console for debugging
+      const struct = component.structure;
+      const elemSet = new Set();
+      const nameSet = new Set();
+      for (let i=0; i<struct.atomCount; i++) {
+        const a = struct.getAtomProxy(i);
+        // element may be in a.element or a.atomname depending on file
+        elemSet.add(a.element);
+        nameSet.add(a.atomname);
+      }
+      console.log("NGL structure.atomCount =", struct.atomCount);
+      console.log("Unique element values:", Array.from(elemSet));
+      console.log("Unique atomname values:", Array.from(nameSet));
+
+      // Defensive selection expressions:
+      // - Try element selector (standard): element Ca or element CA
+      // - Also include atomname if the file uses CA1 / Ca1 naming
+      // Use OR to capture different possible casings/formats
+      const caSele = "(element Ca or element CA or name Ca1 or name CA1 or name CA)";
+      const oSele  = "(element O or element OX or element O1 or name O1 or name O2 or name O3 or name O4)";
+
+      // Add calcium atoms representation (spacefill so Ca is clearly visible)
+      component.addRepresentation("spacefill", {
+        sele: caSele,
+        color: CA_COLOR,
+        colorScheme: "uniform",
+        radiusScale: 1.2
+      });
+
+      // Add oxygen atoms (smaller spacefill)
+      component.addRepresentation("spacefill", {
+        sele: oSele,
+        color: O_COLOR,
+        colorScheme: "uniform",
+        radiusScale: 0.8
+      });
+
+      // Add bonds as licorice (use uniform grey) — keeps atom colors intact
+      component.addRepresentation("licorice", {
+        sele: "bondedTo (element Ca or element CA)", // bonds connected to Ca
+        color: "#CCCCCC",
+        radius: 0.1,
+        multipleBond: true
+      });
+
+      // If you want bond color to be closer to Ca, uncomment below and comment the licorice above:
+      // component.addRepresentation("licorice", { sele: "bondedTo (element Ca or element CA)", color: CA_COLOR, colorScheme: "uniform", radius: 0.1 });
+
+      component.autoView();
+    }).catch(err => {
+      console.error("Failed to load file:", err);
+      alert("Failed to load mol2 — check console for details.");
+    });
+
+    document.getElementById("center").addEventListener("click", () => stage.autoView());
+  </script>
+</body>
+</html>

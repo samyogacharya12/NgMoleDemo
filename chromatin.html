@@ -1,48 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Chromatin MOL2 Visualization</title>
-  <script src="js/ngl.js"></script>
+  <meta charset="utf-8" />
+  <title>CaO NGL 2.x - Single Representation</title>
+  <script src="https://cdn.jsdelivr.net/npm/ngl@2.0.0-dev.35/dist/ngl.js"></script>
   <style>
-    body { margin: 0; background: #111; }
-    #viewport { width: 100vw; height: 100vh; }
+    html, body { margin:0; padding:0; width:100%; height:100%; background:black; }
+    #viewport { width:100%; height:100%; }
   </style>
 </head>
 <body>
-<div id="viewport"></div>
+  <div id="viewport"></div>
 
-<script>
-  // Create NGL Stage
-  const stage = new NGL.Stage("viewport", { backgroundColor: "black" });
+  <script>
+    const stage = new NGL.Stage("viewport", { backgroundColor: "black" });
 
-  // Load your MOL2 file
-  stage.loadFile("icm.output.mol2").then(function (component) {
-    // Make everything yellow and bead-like
-    component.addRepresentation("spacefill", {
-      color: "yellow",  // set all atoms to yellow
-      scale: 0.5         // adjust bead size
+    stage.loadFile("icm.occ.noH.mol2").then(comp => {
+
+      // Single representation with custom coloring
+      comp.addRepresentation("spacefill", {
+        sele: "all",
+        radiusScale: 3.0,
+        color: {
+          atomColor: atom => {
+            const elem = atom.element ? atom.element.toUpperCase() : "";
+            console.log(`Element: ${elem}`);
+            if (elem === "CA") return 0xffff00; // Yellow
+            if (elem === "O")  return 0x0000ff; // Blue
+            return 0x888888;                     // Gray for others
+          }
+        }
+      });
+
+      comp.autoView();
     });
 
-    // Optional: add ball+stick bonds
-    component.addRepresentation("ball+stick", {
-      sele: "all",
-      colorScheme: "element",
-      radiusScale: 0.2
-    });
-
-    // Auto-fit the view
-    component.autoView();
-
-    // ✅ Enable automatic rotation
-    stage.setSpin([0, 1, 0], 0.5);  // Y-axis, speed 0.5
-  });
-
-  // Handle window resize
-  window.addEventListener("resize", function() {
-    stage.handleResize();
-  }, false);
-</script>
-
+    // Handle window resize
+    window.addEventListener("resize", () => stage.handleResize());
+  </script>
 </body>
 </html>

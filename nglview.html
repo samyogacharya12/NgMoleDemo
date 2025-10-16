@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CaO Structure in NGL Viewer</title>
+    <script src="https://unpkg.com/ngl@2.0.0-dev.35/dist/ngl.js"></script>
+    <style>
+        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; background: black; }
+        #viewport { width: 800px; height: 600px; border: 1px solid #ccc; }
+    </style>
+</head>
+
+<body>
+    <div id="viewport"></div>
+
+    <script>
+    const stage = new NGL.Stage("viewport", { backgroundColor: "white" });
+
+    stage.loadFile("cao.mol2").then(function(component) {
+        component.addRepresentation("ball+stick", {
+            sele: "Ca",
+            color: "yellow",
+            radius: 0.8
+        });
+        component.addRepresentation("ball+stick", {
+            sele: "O", 
+            color: "blue",
+            radius: 0.6
+        });
+        stage.autoView();
+    });
+
+    window.addEventListener("resize", () => stage.handleResize());
+    </script>
+</body>
+</html>

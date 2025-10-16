@@ -1,0 +1,12 @@
+@<TRIPOS>MOLECULE
+CaO
+ 2 1 0 0 0
+SMALL
+NO_CHARGES
+
+@<TRIPOS>ATOM
+      1 Ca         0.000    0.000    0.000 Ca    1 MOL       0.000
+      2 O          2.000    0.000    0.000 O     1 MOL       0.000
+
+@<TRIPOS>BOND
+     1     1     2   1
