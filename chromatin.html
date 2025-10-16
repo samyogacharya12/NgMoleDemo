@@ -18,22 +18,32 @@
     stage.loadFile("icm.occ.noH.mol2").then(comp => {
 
       // Single representation with custom coloring
-      comp.addRepresentation("spacefill", {
-        sele: "all",
-        radiusScale: 3.0,
-        color: {
-          atomColor: atom => {
-            const elem = atom.element ? atom.element.toUpperCase() : "";
-            console.log(`Element: ${elem}`);
-            if (elem === "CA") return 0xffff00; // Yellow
-            if (elem === "O")  return 0x0000ff; // Blue
-            return 0x888888;                     // Gray for others
-          }
-        }
-      });
+//  comp.addRepresentation("spacefill", {
+//   sele: "all",
+//   radiusScale: 1.2,
+//   colorScheme: "element"
+// });
 
-      comp.autoView();
+// Oxygen atoms → blue
+comp.addRepresentation("spacefill", {
+  sele: "element O",
+  color: "blue",
+  radiusScale: 1.5
+});
+
+// Calcium atoms → green
+comp.addRepresentation("ball+stick", {
+    sele: "element CA",
+  color: "yellow",
+  radiusScale: 3.0
+});
+  const names = [];
+      comp.structure.eachAtom(atom => {
+        names.push(`${atom.index + 1}: name=${atom.atomname}, element=${atom.element}, type=${atom.atomType}`);
+      });
+      console.log(names.join("\n"));
     });
+      comp.autoView();
 
     // Handle window resize
     window.addEventListener("resize", () => stage.handleResize());
