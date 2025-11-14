@@ -5,8 +5,18 @@
   <title>CaO NGL 2.x - Single Representation</title>
   <script src="https://cdn.jsdelivr.net/npm/ngl@2.0.0-dev.35/dist/ngl.js"></script>
   <style>
-    html, body { margin:0; padding:0; width:100%; height:100%; background:black; }
-    #viewport { width:100%; height:100%; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+    }
+    #viewport {
+      width: 100%;
+      height: 100%;
+      background: black;
+    }
   </style>
 </head>
 <body>
@@ -16,34 +26,34 @@
     const stage = new NGL.Stage("viewport", { backgroundColor: "black" });
 
     stage.loadFile("icm.occ.noH.mol2").then(comp => {
+      // Oxygen atoms → blue
+      comp.addRepresentation("spacefill", {
+        sele: ".O",
+        color: "blue",
+        radiusType: "vdw",    // use van der Waals radius as base
+        radiusScale: 100,     // increase overall radius multiplier
+        scale: 95,           // apply additional scaling factor
+        metalness: 0.01,
+        roughness: 0.4     });
 
-      // Single representation with custom coloring
-//  comp.addRepresentation("spacefill", {
-//   sele: "all",
-//   radiusScale: 1.2,
-//   colorScheme: "element"
-// });
+      // Calcium atoms → yellow
+      comp.addRepresentation("ball+stick", {
+        sele: ".CA",
+        color: "yellow",
+        radiusScale: 3.0
+      });
 
-// Oxygen atoms → blue
-comp.addRepresentation("spacefill", {
-  sele: "element O",
-  color: "blue",
-  radiusScale: 1.5
-});
-
-// Calcium atoms → green
-comp.addRepresentation("ball+stick", {
-    sele: "element CA",
-  color: "yellow",
-  radiusScale: 3.0
-});
-  const names = [];
+      // Log atom details to console
+      const names = [];
       comp.structure.eachAtom(atom => {
         names.push(`${atom.index + 1}: name=${atom.atomname}, element=${atom.element}, type=${atom.atomType}`);
       });
       console.log(names.join("\n"));
-    });
+
+      // Auto-center and zoom out slightly
       comp.autoView();
+      stage.viewer.camera.zoomOut(1.5);
+    });
 
     // Handle window resize
     window.addEventListener("resize", () => stage.handleResize());
