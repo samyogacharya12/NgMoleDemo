@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html>
 <head>
@@ -39,9 +40,10 @@
   </style>
 </head>
 <body>
+  
 
 <div id="nglViewer"></div>
-
+  <button onclick="createViewer()">Open in New Tab</button>
 <!-- Custom context menu -->
 <div id="contextMenu">
   <ul>
@@ -51,6 +53,13 @@
 </div>
 
 <script>
+function createViewer() {
+    fetch("create_viewer.php")
+        .then(resp => resp.text())
+        .then(path => window.open(path, "_blank"));
+}
+
+
   const stage = new NGL.Stage("nglViewer");
   let spinning = true;
 
@@ -90,6 +99,9 @@
 
   // Handle window resize
   window.addEventListener("resize", () => stage.handleResize(), false);
+
+
+
 </script>
 </body>
 </html>

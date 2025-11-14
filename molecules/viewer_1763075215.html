@@ -1,0 +1,26 @@
+
+<!doctype html>
+<html>
+<head>
+<meta charset='utf-8'>
+<title>NGL Viewer</title>
+<script src='https://cdn.jsdelivr.net/npm/ngl@2.0.0-dev.35/dist/ngl.js'></script>
+<style>
+body { margin:0; background:#000; }
+#nglViewer { width:100vw; height:100vh; }
+</style>
+</head>
+<body>
+
+<div id='nglViewer'></div>
+
+<script>
+const stage = new NGL.Stage('nglViewer');
+stage.loadFile('molecules/outputv1.mol2').then(o => {
+    o.addRepresentation('ball+stick');
+    o.autoView();
+});
+</script>
+
+</body>
+</html>
